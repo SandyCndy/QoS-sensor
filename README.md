@@ -94,3 +94,6 @@ User Browser → Dashboard (HTML)
 This project is licensed under the **MIT License**. See the [LICENSE](./LICENSE) file for full details.
 
 ---
+> ⚠️ **Disclaimer**: This is a simulated prototype created for academic and demonstration purposes. It does not replace certified telecom drive test or QoS tools used by official auditing teams.
+
+
