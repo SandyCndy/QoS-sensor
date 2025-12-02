@@ -68,6 +68,74 @@ User Browser → Dashboard (HTML)
 - 🔁 **Data auto-refreshes every 5 seconds**, allowing continuous monitoring
 
 ---
+## 🖥 Code
+
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <WebServer.h>
+
+// Your existing WiFi credentials
+const char* ssid = "Nothing";
+const char* password = "supersandy";  // replace if needed
+
+WebServer server(80);
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("🔌 Connecting to WiFi...");
+
+  WiFi.begin(ssid, password);
+
+  // Wait until connected
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  // Once connected
+  Serial.println("\n✅ Connected to WiFi!");
+  Serial.print("🌐 ESP32 IP Address: http://");
+  Serial.println(WiFi.localIP());  // THIS is the IP you open in browser
+
+  server.on("/", handleRoot);
+  server.begin();
+  Serial.println("✅ Web Server started");
+}
+
+void loop() {
+  server.handleClient();
+}
+
+void handleRoot() {
+  long rssi = WiFi.RSSI();
+  int latency = measureLatency("google.com");
+
+  String html = "<!DOCTYPE html><html><head><meta http-equiv='refresh' content='5'>";
+  html += "<title>ESP32 QoS Monitor</title></head><body>";
+  html += "<h2>📶 ESP32 QoS Sensor</h2>";
+  html += "<p><b>Signal Strength (RSSI):</b> " + String(rssi) + " dBm</p>";
+  html += "<p><b>Ping Latency:</b> " + String(latency) + " ms</p>";
+  html += "<p><i>Auto-refreshes every 5 seconds</i></p>";
+  html += "</body></html>";
+
+  server.send(200, "text/html", html);
+}
+
+int measureLatency(const char* host) {
+  WiFiClient client;
+  unsigned long start = millis();
+  if (client.connect(host, 80)) {
+    unsigned long end = millis();
+    client.stop();
+    return end - start;
+  } else {
+    return -1;
+  }
+}
+
+
+
+---
 
 ## 🧪 Future Improvements
 
